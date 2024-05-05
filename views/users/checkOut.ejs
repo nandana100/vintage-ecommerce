@@ -1,0 +1,352 @@
+<%- include('../layout/userhead.ejs') %>
+
+  <style>
+    .lh-condensed {
+      line-height: 1.25;
+    }
+
+    .checkout-box {
+      background-color: #f1e7e7;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .background {
+      background-color: #adadad;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+
+  <div class="mt-5 ms-5">
+    <a href="/cart" class="btn btn-dark">BACK</a>
+  </div>
+
+
+  <div class="container">
+    <div class="checkout-box">
+      <div class="py-5 text-center">
+        <h2 style="font-weight: bold;">CHECKOUT</h2>
+        <!-- <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p> -->
+      </div>
+      <form class="needs-validation" novalidate="" onsubmit="placeOrder(event)">
+        <div class="row">
+          <div class="col-md-4 order-md-2 mb-4 background">
+
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="">Your cart</span>
+            </h4>
+
+            <ul class="list-group mb-3">
+              <% if (cartData && cartData.products && cartData.products.length> 0) { %>
+                <% for (let i=0; i < cartData.products.length; i++) { %>
+                  <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                      <% if (cartData.products[i].product_id.image && cartData.products[i].product_id.image.length> 0) { %>
+                        <!-- Display the first product image -->
+                        <img src="/public/productImage/<%= cartData.products[i].product_id.image[0] %>" class="img-sm"
+                          style="height: 50px;width: 50px;">
+                        <% } %>
+                          <h6 class="my-0">
+                            <%= cartData.products[i].product_id.name %>
+                          </h6>
+                          <small class="text-muted">
+                            <%= cartData.products[i].product_id.description %>
+                          </small>
+                        </div>
+                        <span class="text-muted">Rs.<%= cartData.products[i].price %></span>
+                    </li>
+                <% } %>
+                <!-- Display total price instead of individual product prices -->
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total Price</span>
+                    <strong>Rs.<%= cartData.totalPrice %></strong>
+                </li>
+                 
+                    <% } else { %>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <span>No products in the cart</span>
+                      </li>
+                      <% } %>
+                       
+            </ul>
+            <div>
+              <hr class="mb-4">
+              <h4 class="mb-3 ">Payment</h4>
+              <div class="d-block my-3">
+                <div class="form-outline mb-4">
+                  <select name="payment" id="payment" class="form-control">
+                    <option value="" class="form-label">Choose Your Payment Method</option>
+                    <option value="COD" class="form-label">COD</option>
+                    <option value="UPI" class="form-label">ONLINE PAYMENT</option>
+                    <option value="WALLET" class="form-label">WALLET</option>
+
+                  </select>
+                </div>
+              </div>
+              <hr class="mb-4">
+              <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="">Continue to checkout</button>
+
+            </div>
+          </div>
+
+
+          <div class="col-md-8 order-md-1">
+            <h4 class="mb-3">Billing address</h4>
+            <div class="row">
+              <div class="form-outline mb-4">
+                <label for="address">Select Address:</label>
+                <select id="address" name="address.address" class="form-control">
+                  <% if (user && user.addresses && user.addresses.length> 0) { %>
+                    <% for (let i=0; i < user.addresses.length; i++) { %>
+                      <option value="<%= user.addresses[i].address %>" data-name="<%= user.addresses[i].name %>"
+                        data-address="<%= user.addresses[i].address %>" data-state="<%= user.addresses[i].state %>"
+                        data-city="<%= user.addresses[i].city %>" data-pincode="<%= user.addresses[i].pincode %>"
+                        data-email="<%= user.email %>">
+                        <%= user.addresses[i].address %>
+                          <%= user.addresses[i].state %>
+                            <%= user.addresses[i].city %>
+                              <%= user.addresses[i].pincode %>
+                      </option>
+                      <% } %>
+                        <% } else { %>
+                          <option value="" disabled>No addresses available</option>
+                          <% } %>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <% if (user && user.addresses) { %>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example1n">Full name</label>
+                  <input type="text" id="form3Example1n" class="form-control form-control-lg" name="name" required />
+                </div>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example8">Address</label>
+                  <input type="text" id="form3Example8" class="form-control form-control-lg" name="address" required />
+                  <!-- Hidden inputs for product details -->
+                  <% for (let i=0; i < cartData.products.length; i++) { %>
+                    <input type="hidden" name="productId" value="<%= cartData.products[i].product_id._id %>">
+                    <input type="hidden" name="proName" value="<%= cartData.products[i].product_id.name %>">
+                    <input type="hidden" name="quantity" value="<%= cartData.products[i].quantity %>">
+                    <input type="hidden" name="price" value="<%= cartData.products[i].price %>">
+                    <% } %>
+                </div>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example8">State</label>
+                  <input type="text" id="form3Example8" class="form-control form-control-lg" name="state" required />
+                </div>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example9">City</label>
+                  <input type="text" id="form3Example9" class="form-control form-control-lg" name="city" required />
+                </div>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example3">Pincode</label>
+                  <input type="text" id="form3Example3" class="form-control form-control-lg" name="pincode" required />
+                </div>
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example2">Email</label>
+                  <input type="text" id="form3Example2" class="form-control form-control-lg" name="email" required />
+                </div>
+                <% } else { %>
+                  <p>User data not available</p>
+                  <% } %>
+            </div>
+          </div>
+
+
+      </form>
+    </div>
+  </div>
+
+
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var form = document.querySelector('.needs-validation');
+      console.log("Form Element:", form);
+      var addressSelect = document.getElementById('address');
+      var fullNameInput = document.getElementById('form3Example1n'); // Added this line
+
+      addressSelect.addEventListener('change', function () {
+        // Check if an address is selected
+        if (addressSelect.value !== "") {
+          // Get the selected address details
+          var selectedAddress = addressSelect.options[addressSelect.selectedIndex];
+
+          // Fill the form fields with the selected address details
+          fullNameInput.value = selectedAddress.dataset.name; // Updated this line
+          document.getElementById('form3Example8').value = selectedAddress.dataset.address;
+          document.querySelector('[name="state"]').value = selectedAddress.dataset.state;
+          document.querySelector('[name="city"]').value = selectedAddress.dataset.city;
+          document.getElementById('form3Example3').value = selectedAddress.dataset.pincode;
+          document.getElementById('form3Example2').value = selectedAddress.dataset.email;
+        } else {
+          // Clear the form fields if no address is selected
+          fullNameInput.value = ''; // Updated this line
+          document.getElementById('form3Example8').value = '';
+          document.querySelector('[name="state"]').value = '';
+          document.querySelector('[name="city"]').value = '';
+          document.getElementById('form3Example3').value = '';
+          document.getElementById('form3Example2').value = '';
+        }
+      });
+    });
+
+
+    const placeOrder = async (event) => {
+  try {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+
+    const cartData = JSON.parse('<%- JSON.stringify(cartData) %>');
+    let updatedTotal = 0;
+
+    if (cartData && cartData.products && cartData.products.length > 0) {
+      cartData.products.forEach(product => {
+        updatedTotal += product.price * product.quantity;
+      });
+    }
+
+    formDataObject['totalPrice'] = updatedTotal.toFixed(2);
+    if (formDataObject['payment'] === 'COD' && parseFloat(formDataObject['totalPrice']) > 1000) {
+      Swal.fire({
+              icon: 'error',
+              title: 'Payment Error',
+              text: "COD not available for orders above $1000",
+            });
+      return;
+    }
+
+    const response = await fetch('/place-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formDataObject),
+    });
+
+    if (!response.ok) {
+      console.error('Fetch error:', response.status, response.statusText);
+      handleNonJsonResponse('Failed to fetch data from the server');
+      return;
+    }
+
+    if (response.redirected) {
+      console.log('Redirect detected, navigating to:', response.url);
+      window.location.href = response.url;
+      return;
+    }
+
+    const result = await response.json();
+    console.log('Parsed JSON Response:', result);
+
+    if (result.response && result.response.method === 'COD') {
+      console.log('COD payment detected');
+
+      const verifyResponse = await fetch('/verifyCOD', {
+        method: 'POST',
+        body: JSON.stringify(formDataObject),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (verifyResponse.ok) {
+        const verifyResult = await verifyResponse.json();
+        window.location.href = '/order-placed';
+      } else {
+        const verifyResult = await verifyResponse.json();
+        handleVerificationFailure(verifyResult.errorMessages);
+      }
+    } else if (result.response && result.response.method === 'UPI') {
+      console.log('UPI payment detected');
+
+      const orderDetails = {
+        key: result.response.key_id,
+        amount: result.response.amount,
+        currency: 'INR',
+        order_id: result.response.order.id,
+        image: '',
+        handler: async function (response) {
+          const formDataClone = new FormData(form);
+
+          formDataClone.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+          });
+
+          const verifyResponse = await fetch('/verifyRazorPay', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formDataClone),
+          });
+
+          if (verifyResponse.ok) {
+            const verifyResult = await verifyResponse.json();
+            window.location.href = '/order-placed';
+          } else {
+            const verifyResult = await verifyResponse.json();
+            handleVerificationFailure(verifyResult.errorMessages);
+          }
+        },
+      };
+
+      const razorpay = new Razorpay(orderDetails);
+      razorpay.on('payment.failed', function (response) {
+        alert("Payment failed and it is pending");
+      });
+      razorpay.open();
+    } else {
+      console.log('Fallback to order-placed');
+      window.location.href = '/order-placed';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    handleNonJsonResponse('Unexpected error');
+  }
+};
+
+
+
+    function handleVerificationFailure(errorMessage) {
+      const customAlertContainer = document.getElementById('customAlertContainer');
+      const customAlertStrong = document.getElementById('customAlertStrong');
+
+      if (customAlertContainer && customAlertStrong) {
+        customAlertStrong.textContent = errorMessage;
+        customAlertContainer.style.display = 'block';
+        console.log('Failed to verify Razorpay payment');
+      } else {
+        console.error('Failed to set properties on null elements');
+      }
+    }
+
+    function handleNonJsonResponse(errorMessage = 'Unexpected error') {
+      const customAlertContainer = document.getElementById('customAlertContainer');
+      const customAlertStrong = document.getElementById('customAlertStrong');
+
+      if (customAlertContainer && customAlertStrong) {
+        customAlertStrong.textContent = errorMessage;
+        customAlertContainer.style.display = 'block';
+        console.log('Failed to place order (non-JSON response)');
+      } else {
+        console.error('Failed to set properties on null elements');
+      }
+    }
+  </script>
+
+  <%- include('../layout/userFoot.ejs') %>

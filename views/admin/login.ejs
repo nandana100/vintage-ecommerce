@@ -1,0 +1,111 @@
+<%- include('../layout/Headerr.ejs')%>
+<style>
+    .error-message {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+    .input{
+        height:40px;
+        width:230px;
+        margin-right: 10px;
+    }
+  
+   
+
+  </style>
+
+<div class="logo">
+<h1>Vintage</h1>
+</div>
+<div class="container">      
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  
+    <form action="" method="post" role="form" enctype="application/x-www-form-urlencoded" id="adminForm">
+        <div class="head">
+        <h1 style="margin-top: 5px;"> Admin Login</h1>
+    </div>
+    <br>
+    
+
+
+                  
+    <div class="input-field"style="margin-left: 50px;width:40px">
+        <input type="email" class="input" name="email" id="email" required="" autocomplete="off" placeholder="Email">
+        
+        <span class="error-message" id="email-error"></span>
+    </div>
+    <br>
+    <div class="input-field" style="margin-left: 50px;">
+      <input type="password" class="input" name="password" id="pass" required=""  placeholder="Password" >
+     
+      <span class="error-message" id="password-error"></span>
+  </div>
+<br>
+<br>
+
+
+<button type="submit" class="button">login</button>
+<br>
+<br>
+  
+</form>
+</div>
+</div>
+
+   
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('adminForm');
+
+        loginForm.addEventListener('submit', function (event) {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('pass');
+
+            // Reset previous error messages
+            document.getElementById('email-error').textContent = '';
+            document.getElementById('password-error').textContent = '';
+
+            // Validate email
+            if (!isValidEmail(emailInput.value)) {
+                document.getElementById('email-error').textContent = 'Please provide a valid email address.';
+                event.preventDefault();
+                return;
+            }
+
+            // Validate password
+            if (!isValidPassword(passwordInput.value)) {
+                document.getElementById('password-error').textContent = 'Password must be at least 4 characters long.';
+                event.preventDefault();
+                return;
+            }
+        });
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPassword(password) {
+            return password.length >= 4;
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include ('../layout/footer.ejs')%>

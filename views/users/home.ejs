@@ -1,0 +1,85 @@
+<%- include('../layout/userhead.ejs') %>
+
+<style>
+  .card {
+    margin-right: 10px; 
+    width: calc(44.33% - 14px); /* Adjust based on the number of cards you have */
+    /* Use media queries for more specific adjustments */
+  }
+  .img img {
+    width: 100%;
+    height: auto; /* Ensures the aspect ratio is maintained */
+  }
+
+  @media screen and (max-width: 208px) {
+    .card {
+      width: calc(50% - 10px);
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    .card {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="home">
+  <div class="content" data-aos="zoom-out-right">
+    <div class="img">
+      <img src="" alt="">
+    </div>
+  </div>
+</div>
+
+<div class="d-flex flex-row mt-4 ms-5">
+  <div class="card">
+    <a href="/allProduct">
+      <img src="/public/photos/all.jpg" class="card-img-top" alt="Description of the image">
+    </a>
+    <div class="card-body">
+      <p class="card-text">ALL CLOTHES</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="">
+      <img src="/public/photos/www.jpg" class="card-img-top" alt="Description of the image">
+    </a>
+    <div class="card-body">
+      <p class="card-text">WESTERN WEAR</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="">
+      <img src="/public/photos/tsshirrty.webp" class="card-img-top" alt="Description of the image">
+    </a>
+    <div class="card-body">
+      <p class="card-text">T-SHIRTS</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <a href="">
+      <img src="/public/photos/indian.jpg" class="card-img-top" alt="Description of the image">
+    </a>
+    <div class="card-body">
+      <p class="card-text">INDIAN</p>
+    </div>
+  </div>
+</div>
+
+<div class="banner" data-aos="fade-up" data-aos-duration="1500">
+  <div class="content">
+    <h3>Trendy clothes</h3>
+    <h2>UPTO 50% OFF</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, quod.</p>
+    <div id="btnorder"><button>Order Now</button></div>
+  </div>
+  <div class="img">
+    <img src="/public/photos/sale banner.jpg" alt="">
+  </div>
+</div>
+
+<%- include('../layout/userFoot.ejs') %>

@@ -1,0 +1,60 @@
+<%- include('../adminLayout/homehead.ejs') %>
+<style>
+    .container{
+        width:700px;
+        height:550px;
+        margin-right:170px;
+        margin-top:1px;
+        background-color: rgb(124, 123, 122);
+        padding-left: 150px;
+        padding-top:50px;
+    }
+    .form-control{
+        width:400px;
+    }
+</style>
+
+
+<div style="margin: 60px;">
+    <div class="container">
+    
+    <h1>Order Details</h1>
+    <form>
+        <div class="form-group">
+            <label for="orderId">Order ID:</label>
+            <input type="text" class="form-control" id="orderId" value="<%= order._id %>" readonly>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="name">Customer Name</label>
+            <input type="text" class="form-control" id="address" value="  <%= order.name%>"
+           readonly>
+        </div>
+        <br>
+        
+        <div class="form-group">
+            <label for="address">address</label>
+            <input type="text" class="form-control" id="address" value=" <%= order.addresses.address %>" readonly>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="totalPrice">Total Price:</label>
+            <input type="text" class="form-control" id="totalPrice" value="<%= order.totalPrice %>" readonly>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="payment Method">Payment method</label>
+            <input type="text" class="form-control" id="totalPrice" value="<%= order.paymentMethod%>" readonly>
+        </div>
+        <br>
+ 
+    
+
+  </form>
+</div>
+</div>
+<%- include('../adminLayout/homefooter.ejs') %>
+
+
+
+

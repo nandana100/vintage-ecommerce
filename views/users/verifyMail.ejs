@@ -1,0 +1,132 @@
+<%- include('../layout/otpheader.ejs')%>
+<h1 style="font-family: 'Arial', sans-serif; color: #333; margin-top: 15px;margin-left:65px;">Vintage</h1>
+
+<div class="container"style="margin-top:180px;margin-left:540px" >
+  <div class="otp-box" style="max-width:390px; padding: 40px; background-color: #fff; border-radius: 8px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);">
+    <h1 style="font-family: 'Arial', sans-serif; color: #333; text-align: center; margin-bottom: 30px;">OTP verfication</h1>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error-message" style="color: red; text-align: center; margin-bottom: 15px; font-weight: bold;"><%= error %></p>
+    <% } %>
+
+    <form id="verifyOtpForm">
+      <input type="hidden" name="userId" id="userIdInput" value="<%= userId %>">
+      
+      <div class="input-field" style="margin-bottom: 20px;">
+        <input type="text" name="otp" id="otpInput" placeholder="Enter OTP" style="height: 40px; width: 100%; border: 1px solid #ccc; border-radius: 5px; padding: 10px; font-size: 16px;">
+        <div class="error-message" id="otpErrorMessage" style="color: red; margin-top: 10px; font-size: 14px;"></div>
+      </div>
+
+      <button type="button" id="verifyOtpButton" style="background-color: #f0c14b; color: #111; box-shadow: none; width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold;">Verify OTP</button>
+    
+      <div class="resend" style="text-align: center; color: #0e0d0d; margin-top: 20px;">
+        <p style="font-size: 16px; margin-bottom: 10px;">Didn't receive OTP?</p>
+        <div id="otpTimer" style="font-size: 16px; color: #d14242; margin-top: 5px;">1:00</div>
+        <div style="font-size: 16px; color: #007bff; cursor: pointer;" id="resendOtpLink">Resend </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const timerElement = document.getElementById('otpTimer');
+    const resendLink = document.querySelector('.resendLink');
+    const userIdInput = document.getElementById('userIdInput');
+    const verifyOtpButton = document.getElementById('verifyOtpButton');
+    const otpInput = document.getElementById('otpInput');
+    const otpErrorMessage = document.getElementById('otpErrorMessage');
+
+    let timerDuration = parseInt(timerElement.textContent.split(':')[0]) * 60 + parseInt(timerElement.textContent.split(':')[1]);
+
+    function updateTimer() {
+        const minutes = Math.floor(timerDuration / 60);
+        const seconds = timerDuration % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function updateResendLink() {
+        if (timerDuration <= 0) {
+            resendLink.style.display = 'block';
+        }
+    }
+
+    function startTimer() {
+        if (timerDuration <= 0) {
+            timerDuration = 60;
+        }
+        const timerInterval = setInterval(function () {
+            if (timerDuration > 0) {
+                timerDuration--;
+                updateTimer();
+                updateResendLink();
+            } else {
+                clearInterval(timerInterval);
+               
+                timerElement.textContent = 'Expired';
+            }
+        }, 1000); 
+    }
+
+    if (timerDuration > 0) {
+        startTimer();
+    }
+
+    verifyOtpButton.addEventListener('click', function () {
+        const otp = otpInput.value;
+        const userId = userIdInput.value;
+
+        verifyOtp(userId, otp);
+    });
+
+    function verifyOtp(userId, otp) {
+        fetch('/verifyMail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: userId, otp: otp }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.redirectTo) {
+                    window.location.href = data.redirectTo;
+                } else {
+                    alert('OTP verification successful');
+                }
+            } else {
+                otpErrorMessage.textContent = data.message;
+            }
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('Error:', error);
+        });
+    }
+
+    document.getElementById('resendOtpLink').addEventListener('click', function (event) {
+        event.preventDefault();
+        const userId = userIdInput.value;
+
+       
+        fetch(`/resendOtp/${userId}`)
+        .then(response => {
+            if (response.ok) {
+                timerDuration = 60;
+                startTimer();
+                resendLink.style.display = 'none';
+            } else {
+                console.error('Failed to resend OTP');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+  </script>
+  
+<%- include('../layout/footer.ejs')%>

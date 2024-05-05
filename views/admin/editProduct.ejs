@@ -1,0 +1,153 @@
+
+<%- include('../adminLayout/homehead.ejs') %>
+
+<body>
+    <!-- Section: Design Block -->
+    <section class="">
+        <!-- Jumbotron -->
+        <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+            <div class="container">
+                <div class="row gx-lg-5 align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="card">
+                            <div class="card-body py-5 px-md-5">
+                                <form id="editCategoryForm" action="/admin/editProduct?id=<%= product._id %>" method="post" enctype="multipart/form-data">
+
+                                    <!-- Form content -->
+                            
+                                
+                                    <!-- 2 column grid layout with text inputs for the first and last names -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label class="form-label"> Name</label>
+                                                <input type="hidden" name="id" value="<%= product._id %>">
+                                                <input type="text" name="name" id="categoryName" class="form-control" value="<%= product.name %>" />
+                                                <small id="categoryError" class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label class="form-label"> Price</label>
+                                                <input type="hidden" name="id" value="<%= product._id %>">
+                                                <input type="text" name="price" id="price" class="form-control" value="<%= product.price %>" />
+                                                <small id="categoryError" class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label class="form-label"> Quantity</label>
+                                                <input type="hidden" name="id" value="<%= product._id %>">
+                                                <input type="text" name="quantity" id="quantity" class="form-control" value="<%= product.quantity %>" />
+                                                <small id="categoryError" class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label class="form-label"> Description</label>
+                                                <input type="hidden" name="id" value="<%= product._id %>">
+                                                <input type="text" name="description" id="categoryName" class="form-control" value="<%= product.description %>" />
+                                                <small id="categoryError" class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label class="form-label"> Category name</label>
+                                                <label for="category">Category:</label>
+                                                <select name="category_id" id="category" required>
+                                                    <% categories.forEach(category => { %>
+                                                        <option value="<%= category._id %>" <%= product.category_id._id.toString() === category._id.toString() ? 'selected' : '' %>><%= category.name %></option>
+                                                    <% }); %>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <% existingImages.forEach((image, index) => { %>
+                                        <div class="row existing-image-container">
+                                            <div class="col-md-6 mb-4">
+                                                <label class="form-label"> Choosen Image</label>
+                                                <img src="/public/productImage/<%= image %>" alt="Existing Image" class="existing-image" style="width:85px;height:50px;"/>
+                                                <!-- Add a data attribute to store the image filename -->
+                                                <button class="btn btn-danger btn-delete-image" data-product-id="<%= product._id %>" data-filename="<%= image %>"style="width:50px;height:20px;padding-top:1px">X </button>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                    
+
+
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-primary btn-block mb-4">
+                                        Update
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Jumbotron -->
+    </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.btn-delete-image');
+
+    deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const productId = button.dataset.productId;
+            const filename = button.dataset.filename;
+
+            // Make an AJAX request to delete the image on the server
+            fetch(`/admin/deleteImage?productId=${productId}&imageName=${filename}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log(data.message);
+                    // Remove the corresponding image preview
+                    button.closest('.existing-image-container').remove();
+                } else {
+                    console.error('Failed to delete image');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+document.addEventListener('DOMContentLoaded', function () {
+    const editForm = document.getElementById('editCategoryForm');
+    const priceInput = document.getElementById('price');
+    const quantityInput = document.getElementById('quantity');
+
+    editForm.addEventListener('submit', function (event) {
+        let isValid = true;
+
+        if (parseFloat(priceInput.value) < 0) {
+            isValid = false;
+            alert('Price must be a positive value.');
+        }
+
+        if (parseInt(quantityInput.value) < 0) {
+            isValid = false;
+            alert('Quantity must be a positive value.');
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+});
+
+</script>
+    
+    <%- include('../adminLayout/homefooter.ejs') %>

@@ -1,0 +1,615 @@
+<%- include('../layout/userhead.ejs') %>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+    body {
+     background-color: #afb3a6;
+      font-family: 'Open Sans', serif;
+      font-size: 14px;
+    }
+
+    .container-fluid {
+      margin-top: 70px;
+    }
+
+    .card-body {
+      flex: 1 1 auto;
+      padding: 1.40rem;
+      
+    border: 1px solid #141313; 
+    }
+
+    .img-sm {
+      width: 100%;
+      /* Adjusted for responsiveness */
+      max-width: 80px;
+      /* Maximum width */
+      height: auto;
+    }
+
+    .itemside .info {
+      padding-left: 15px;
+      padding-right: 7px;
+    }
+
+    .table-shopping-cart .price-wrap {
+      line-height: 1.2;
+    }
+
+    .table-shopping-cart .price {
+      font-weight: bold;
+      margin-right: 5px;
+      display: block;
+    }
+
+    .text-muted {
+      color: #969696 !important;
+    }
+
+    a {
+      text-decoration: none !important;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      word-wrap: break-word;
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, .125);
+      border-radius: 0;
+    }
+
+    .itemside {
+      display: flex;
+      width: 100%;
+    }
+
+    .dlist-align {
+      display: flex;
+    }
+
+    [class*="dlist-"] {
+      margin-bottom: 5px;
+    }
+
+    .coupon {
+      border-radius: 1px;
+    }
+
+    .price {
+      font-weight: 600;
+      color: #212529;
+    }
+
+    .btn.btn-out {
+      outline: 1px solid #fff;
+      outline-offset: -5px;
+    }
+
+    .btn-main {
+      border-radius: 2px;
+      text-transform: capitalize;
+      font-size: 15px;
+      padding: 10px 19px;
+      cursor: pointer;
+      color: #fff;
+      width: 100%;
+    }
+
+    .btn-light {
+      color: #ffffff;
+      background-color: #F44336;
+      border-color: #f8f9fa;
+      font-size: 12px;
+    }
+
+    .btn-light:hover {
+      color: #ffffff;
+      background-color: #F44336;
+      border-color: #F44336;
+    }
+
+    .btn-apply {
+      font-size: 11px;
+    }
+    .cart-box {
+    border: 1px solid #141313; /* Border style */
+    padding: 15px; /* Add padding for spacing */
+    border-radius: 5px; /* Optional: Add border radius for rounded corners */
+    margin: 20px 0; /* Add margin for spacing */
+  }
+
+  /* Add styles for the line after all cart products */
+  .cart-line {
+    border-top: 1px solid #0c0b0b; /* Border style */
+    margin-top: 20px; /* Add margin for spacing */
+    margin-bottom: 20px; /* Add margin for spacing */
+  }
+
+    /* Media query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      .itemside {
+        flex-direction: column;
+      }
+
+      .itemside .info {
+        padding-left: 0;
+        padding-top: 15px;
+        /* Adjusted padding */
+      }
+
+      .img-sm {
+        margin-bottom: 15px;
+        /* Adjusted margin for better spacing */
+      }
+
+      .btn-main,
+      .btn-light {
+        width: auto;
+      }
+
+      .text-right.d-none {
+        text-align: left !important;
+      }
+
+      .text-right.d-none a,
+      .text-right.d-none button {
+        margin-top: 10px;
+        /* Adjusted margin for better spacing */
+        width: 100%;
+        /* Make buttons take full width on smaller screens */
+      }
+
+      /* Styles for the additional element */
+      .additional-element {
+        /* Your styles for this element on smaller screens */
+        /* For example: */
+        font-size: 16px;
+        color: #333;
+        margin-top: 10px;
+      }
+      /* Add styles for the main shopping cart box */
+      
+}
+  </style>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="new-integrity-value" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <div class="mt-5 ms-5">
+    <a href="/allProduct" class="btn btn-dark">BACK</a>
+<div>
+  <h1 style=" margin-left:370px;margin-top:45px">CART PRODUCTS</h1>
+</div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <aside class="col-lg-9">
+        <div class="cart-box">
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-borderless table-shopping-cart">
+              <thead class="text-muted">
+                <tr class="small text-uppercase">
+                  <th scope="col">Product</th>
+                  <th scope="col" width="120">Quantity</th>
+                  <th scope="col" width="120">Price</th>
+                  <th scope="col" class="text-right d-none d-md-table-cell" width="200"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (cartData && cartData.products && cartData.products.length> 0) { %>
+                  <% for (let i=0; i < cartData.products.length; i++) { %>
+                    <tr>
+                      <td>
+                        <figure class="itemside align-items-center">
+                          <div class="aside">
+                            <% if (cartData.products[i].product_id && cartData.products[i].product_id.image && cartData.products[i].product_id.image.length > 0) { %>
+                              <!-- Display the first product image -->
+                              <img src="/public/productImage/<%= cartData.products[i].product_id.image[0] %>" class="img-sm" style="height: 50px;width: 50px;">
+                            <% } %>
+                          </div>
+                        </figure>
+                        <figcaption class="info">
+                          <% if (cartData.products[i].product_id) { %>
+                            <a href="#" class="title text-dark" data-abc="true">
+                              <%= cartData.products[i].product_id.name %>
+                            </a>
+                            <p class="text-muted small d-none-sm">
+                              <%= cartData.products[i].product_id.description %>
+                            </p>
+                          <% } %>
+                        </figcaption>
+                        </figure>
+                      </td>
+                      <td>
+                        <div class="input-group">
+                            <button class="btn btn-light btn-minus" type="button">-</button>
+                            <% if (cartData.products[i].product_id) { %>
+                                <input type="text" class="form-control quantity-input"
+                                    value="<%= cartData.products[i].quantity %>" min="1"
+                                    data-product-id="<%= cartData.products[i].product_id._id %>"
+                                    data-max-quantity="<%= cartData.products[i].product_id.quantity %>">
+                            <% } %>
+                            <button class="btn btn-light btn-plus" type="button">+</button>
+                        </div>
+                    </td>
+                    
+                      <td>
+                        <div class="price-wrap">
+                          <% if (cartData.products[i].product_id) { %>
+                            <var class="price">Rs.<%= (cartData.products[i].price * cartData.products[i].quantity).toFixed(2) %></var>
+                          <% } %>
+                        </div>
+                      </td>
+                      <td class="text-right d-none d-md-table-cell">
+                        <div class="d-flex justify-content-end">
+                          <% if (cartData.products[i].product_id) { %>
+                            <a data-original-title="Save to Wishlist" title=""
+                              href="/addToWishlist/<%= cartData.products[i].product_id._id %>" class="btn btn-light me-2"
+                              data-toggle="tooltip" data-abc="true">
+                              <i class="fa fa-heart"></i>
+                            </a>
+                          <% } %>
+                          <button class="btn btn-light btn-delete"
+                            data-product-id="<%= cartData.products[i].product_id ? cartData.products[i].product_id._id : '' %>"
+                            data-abc="true">Remove</button>
+                        </div>
+                      </td>
+                      
+                    </tr>
+                    <% } %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="4">
+                            <div class="col">
+                              <p class="text-center">Products Not Found</p>
+                            </div>
+                          </td>
+                        </tr>
+                        <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </aside>
+      
+      
+
+
+      <aside class="col-lg-3">
+        <div class="card mb-3">
+          <div class="card-body">
+            <form id="couponForm" method="post" action="">
+              <div class="form-group mb-3">
+                <div class="input-group">
+                  <button class="btn btn-primary btn-apply coupon" id="showCouponBtn" type="button"
+                    onclick="toggleCouponInput()">
+                    <i class="fas fa-tags"></i> Have a coupon?
+                  </button>
+                  
+
+                  <div id="couponInputContainer" style="display: none;" class="mt-4">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Enter coupon code" name="couponCode"
+                        id="couponCodeInput">
+                      <button class="btn btn-success btn-apply coupon" type="button" id="applyCouponBtn"
+                        onclick="applyDiscountCode()">
+                        Apply Coupon
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+                <small class="text-muted mt-3">* Coupon can only be applied for purchases above Rs 1000.</small>
+              </div>
+              
+            </form>
+          </div>
+          <button class="btn btn-danger btn-remove-coupon" onclick="removeCoupon()">Remove Coupon</button>
+
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <dl>
+              <h3>Cart items</h3>
+            </dl>
+            <hr>
+            <% if (cartData && cartData.products && cartData.products.length > 0) { %>
+              <% cartData.products.forEach(function (item) { %>
+                <dl class="dlist-align justify-content-between">
+                  <% if (item.product_id) { %>
+                    <dt class="text-left">
+                      <%= item.product_id.name %>
+                    </dt>
+                    <dd class="text-right ml-3">
+                      <%= item.product_id.price %>
+                    </dd>
+                  <% } %>
+                </dl>
+            
+          
+                <% }); %>
+                  <hr>
+                  <% } else { %>
+                    <p>No items in the cart.</p>
+                    <% } %>
+                      <dl class="dlist-align">
+                        <dt class="text-left">Total:</dt>
+                        <dd class="text-right text-dark b ml-3">
+                          <strong>
+                            <% if (cartData && cartData.totalPrice !==undefined) { %>
+                              <%= cartData.totalPrice %>
+                                <% } else { %>
+                                  0
+                                  <% } %>
+                          </strong>
+                        </dd>
+                      </dl>
+                      <hr>
+                   
+                      <div id="appliedCouponDetails" style="display: none;">
+                        <dl class="dlist-align justify-content-between">
+                          <div>
+                          <h4 style="color:red">COUPON DETAILS:</h4>
+                        </div>
+                        <br>
+                          <dt class="text-left">Discount Amount:</dt>
+                          <dd class="text-right text-dark b ml-3">
+                            <strong id="discountAmount"></strong>
+                          </dd>
+                        </dl>
+                        <dl class="dlist-align justify-content-between">
+                          <dt class="text-left">Old Total Amount:</dt>
+                          <dd class="text-right text-dark b ml-3">
+                            <strong id="oldTotalAmount"></strong>
+                          </dd>
+                        </dl>
+                        <dl class="dlist-align justify-content-between">
+                          <dt class="text-left">New Total Amount:</dt>
+                          <dd class="text-right text-dark b ml-3">
+                            <strong id="newTotalAmount"></strong>
+                          </dd>
+                        </dl>
+                        <hr>
+                      </div>
+                      <a href="/orderLoad" class="btn btn-out btn-primary btn-square btn-main" data-abc="true"> Proceed
+                        to Checkout </a>
+                      <a href="/allProduct" class="btn btn-out btn-success btn-square btn-main mt-2"
+                        data-abc="true">Continue Shopping</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  <script>
+
+    function toggleCouponInput() {
+      const couponInputContainer = document.getElementById('couponInputContainer');
+      couponInputContainer.style.display = couponInputContainer.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    async function applyDiscountCode() {
+      try {
+        // Retrieve the discount code from the input field
+        const discountCode = document.getElementById('couponCodeInput').value;
+    
+        // Capture the original total amount before applying the coupon
+        const oldTotalElement = document.querySelector('.text-right.text-dark.b strong');
+        const oldTotalAmount = oldTotalElement ? parseFloat(oldTotalElement.textContent.trim()) : 0;
+    
+        // Show loading spinner during coupon verification
+        Swal.showLoading();
+    
+        // Retrieve the total price from the cart
+        const totalElement = document.querySelector('.text-right.text-dark.b strong');
+        const total = totalElement ? parseFloat(totalElement.textContent.trim()) : 0;
+    
+        // Prepare the request body
+        const requestBody = {
+          coupon: discountCode,
+          total,
+          oldTotalAmount, // Include the oldTotalAmount in the request body
+        };
+    
+        // Send a request to the server to verify the coupon
+        const response = await fetch('/verifyCoupon', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+    
+        // Close the loading spinner
+        Swal.close();
+    
+        // Check if the response is OK
+        if (response.ok) {
+          // Parse the response JSON
+          const result = await response.json();
+    
+          // Check if the coupon verification was successful
+          if (result.message === 'Coupon verified') {
+            // Update coupon details on the page
+            document.getElementById('discountAmount').innerText = `-${result.discountAmount}`;
+            document.getElementById('newTotalAmount').innerText = result.totalAfterDiscount;
+    
+            // Show the applied coupon details
+            const appliedCouponDetails = document.getElementById('appliedCouponDetails');
+            appliedCouponDetails.style.display = 'block';
+    
+            // Update the old total amount on the page
+            document.getElementById('oldTotalAmount').innerText = oldTotalAmount.toFixed(2);
+    
+            // Show SweetAlert with close button
+            Swal.fire({
+              icon: 'success',
+              title: 'Coupon Applied!',
+              text: 'The coupon has been applied successfully.',
+              showCloseButton: true,  // Show a close button
+              showConfirmButton: false,  // Hide the "OK" button
+            });
+          } else {
+            // Show SweetAlert for unsuccessful coupon application
+            Swal.fire({
+              icon: 'error',
+              title: 'Coupon Error',
+              text: result.message,
+            });
+          }
+        } else {
+          // Parse the response JSON for error handling
+          const result = await response.json();
+    
+          // Display the error message in the UI
+          const errorTrueElement = document.getElementById('error_true1');
+          errorTrueElement.textContent = result.message;
+    
+          // Show SweetAlert for coupon verification failure
+          Swal.fire({
+            icon: 'error',
+            title: 'Coupon Verification Failed',
+            text: result.message,
+          });
+        }
+      } catch (error) {
+        // Handle unexpected errors
+        console.error('Error in applyDiscountCode:', error);
+    
+        // Show SweetAlert for unexpected errors
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An unexpected error occurred. Please try again.',
+        });
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+
+    quantityInputs.forEach(function (input) {
+        const minusBtn = input.parentElement.querySelector('.btn-minus');
+        const plusBtn = input.parentElement.querySelector('.btn-plus');
+        const maxStock = parseInt(input.getAttribute('data-max-quantity')); // Retrieve max quantity from data attribute
+
+        minusBtn.addEventListener('click', function () {
+            const currentQuantity = parseInt(input.value);
+            if (currentQuantity > 1) {
+                input.value = currentQuantity - 1;
+                updateQuantity(input, currentQuantity - 1, maxStock); // Pass maxStock to updateQuantity
+            }
+        });
+
+        plusBtn.addEventListener('click', function () {
+            const currentQuantity = parseInt(input.value);
+            if (currentQuantity < maxStock) {
+                input.value = currentQuantity + 1;
+                updateQuantity(input, currentQuantity + 1, maxStock); // Pass maxStock to updateQuantity
+            } else   Swal.fire({
+          icon: 'error',
+          title: 'Out of stock',
+          text: 'The maximum available quantity is ' + maxStock
+
+        });
+        });
+    });
+    
+      // Add an event listener for the "Remove" buttons
+      const deleteButtons = document.querySelectorAll('.btn-delete');
+      deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          const productId = button.dataset.productId;                
+          fetch(`/deleteItem/${productId}`, {
+            method: 'POST'
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                button.closest('tr').remove();
+              } else {
+                console.error('Failed to delete item');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+      });
+    
+    });
+    
+    function updateQuantity(input, newQuantity, maxStock) {
+        const productId = input.dataset.productId;
+        if (newQuantity > maxStock) { // Check against maxStock instead of input.getAttribute('max')
+            alert('The maximum available quantity is ' + maxStock);
+            return; // Exit the function without updating if maximum quantity exceeded
+        }
+
+        fetch('/updateQuantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                productId,
+                newQuantity,
+                currentQuantity: parseInt(input.value), // Use parseInt(input.value) instead of currentQuantity
+                currentUnitPrice: parseFloat(input.closest('tr').querySelector('.price').textContent.trim().replace('Rs.', '')),
+                currentTotalPrice: parseFloat(document.querySelector('.text-right.text-dark.b strong').textContent.trim().replace('Rs.', ''))
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const totalElement = document.querySelector('.text-right.text-dark.b strong');
+                    totalElement.textContent = 'Rs.' + data.updatedTotal.toFixed(2);
+                } else {
+                    console.error('Failed to update quantity:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+// JavaScript code to remove the applied coupon
+function removeCoupon() {
+  // Make an AJAX request to your server to remove the coupon
+  // You can use fetch or jQuery.ajax to make the request
+  fetch('/removeCoupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({}) // You can pass any data needed for removing the coupon
+  })
+  .then(response => {
+    if (response.ok) {
+      // Coupon removed successfully, update the UI accordingly
+      document.getElementById('appliedCouponDetails').innerHTML = ''; // Remove coupon details from UI
+      // You may need to update other parts of the UI as well, such as total amount
+    } else {
+      // Failed to remove coupon, handle the error
+      console.error('Failed to remove coupon:', response.statusText);
+    }
+  })
+  .catch(error => {
+    console.error('Error while removing coupon:', error);
+  });
+}
+
+    
+    </script>
+    
+  <%- include('../layout/userFoot.ejs') %>

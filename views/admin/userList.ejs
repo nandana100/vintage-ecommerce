@@ -1,0 +1,67 @@
+<%- include('../adminLayout/homehead.ejs') %>
+
+<div class="sidebar-logo">
+    <button style="background-color: black;"><a href="/admin/dashboard" style="color: white;font-size: 15px;margin-top: 25px;"> back </a></button>
+</div>
+
+<section>
+    <div class="container">
+        <h1>User-List</h1>
+        <table class="table table-hover mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (users.length > 0) {
+                    for (let i = 0; i < users.length; i++) { %>
+                        <tr>
+                            <td scope="row"><%= users[i].name %></td>
+                            <td scope="row"><%= users[i].mobile %></td>
+                            <td scope="row"><%= users[i].email %></td>
+                            <td>
+                                <% if (users[i].is_blocked) { %>
+                                    <a href="/admin/unblock-user?id=<%= users[i]._id %>">
+                                        <img style="width: 20px; height: auto;"
+                                            src="https://cdn.iconscout.com/icon/free/png-256/free-block-2043449-1741195.png?f=webp"
+                                            alt="Unblock">
+                                    </a>
+                                <% } else { %>
+                                    <a href="/admin/block-user?id=<%= users[i]._id %>">
+                                        <img style="width: 20px; height: auto;"
+                                            src="https://w7.pngwing.com/pngs/943/637/png-transparent-stop-sign-no-symbol-warning-sign-red-block-sign-s-angle-text-trademark.png"
+                                            alt="Block">
+                                    </a>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }
+                } else { %>
+                    <tr>
+                        <td colspan="5">Users Not Found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+    </div>
+    
+    <br>
+    <br>
+    
+</section>
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+        <% } %>
+    </ul>
+</nav>
+
+<%- include('../adminLayout/homefooter.ejs') %>

@@ -1,0 +1,134 @@
+<%- include('../layout/userhead.ejs') %>
+
+<style>
+    /* Container styles */
+    .container {
+        width: 670px; /* Adjust container width as needed */
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #bdabab;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Product info styles */
+    .product-details {
+        text-align: left;
+        margin-top:120px; /* Align product details to the left */
+    }
+
+    .product-details h1 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .product-details p {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #666;
+    }
+
+    .product-details .desc {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .product-details h2 {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #dd2231; /* Flipkart or Amazon's primary color */
+    }
+
+    .main-image img {
+        width: 20px;
+        height: 350px;
+    }
+
+    .preview-images {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .preview-img {
+        width: 30%; /* Adjust the size of the preview images as needed */
+        height: auto;
+        margin: 5px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .preview-img:hover {
+        transform: scale(3.2);
+    }
+
+    /* Cart actions styles */
+    .cart {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .cart .btn {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+
+    .cart .btn-danger {
+        background-color: #f57224; /* Flipkart or Amazon's primary color */
+        color: #fff;
+    }
+
+    .cart .btn-light {
+        background-color: #f1f1f1;
+        color: #333;
+    }
+</style>
+
+<div class="mt-5 ms-5">
+    <a href="/allProduct" class="btn btn-dark">BACK</a>
+</div>
+
+<div class="container mt-3">
+    <% if (typeof product !=='undefined' && product !==null) { %>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="main-image">
+                    <img src="/public/productImage/<%= product.image[0] %>" class="d-block w-100" alt="Main Product Image">
+                </div>
+                <div class="preview-images">
+                    <% for (let i=0; i < product.image.length; i++) { %>
+                        <img src="/public/productImage/<%= product.image[i] %>" class="preview-img" alt="Preview Image <%= i %>">
+                    <% } %>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="product-details">
+                    <h1 style="font-size:45px"><b><%= product.name %></b></h1>
+                    <p><%= product.category %></p>
+                    <p class="desc"><%= product.description %></p>
+                    <h2><b>Rs. <%= product.price %></b></h2>
+                    <div class="cart">
+                        <a href="/add-to-cart/<%= product._id %>" class="btn btn-danger">Add to Cart</a>
+                        <a data-original-title="Save to Wishlist" title="" href="/addToWishlist/<%= product._id %>" class="btn btn-light me-2" data-toggle="tooltip" data-abc="true">
+                            <i class="fa fa-heart"><img src="/public/photos/wishhh.jpg" alt="" width="20px"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <p><%= message %></p>
+    <% } %>
+</div>
+
+<%- include('../layout/userFoot.ejs') %>

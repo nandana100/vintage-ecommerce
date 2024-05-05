@@ -1,0 +1,251 @@
+<%- include('../adminLayout/homehead.ejs') %>
+
+    <style>
+        #filterForm {
+            display: flex;
+            align-items: center;
+        }
+
+        #filterForm label {
+            margin-right: 10px;
+        }
+    </style>
+
+    <h1 style="text-align: center; font-weight: bolder;">SALES REPORTS</h1><br><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <a href="#" onclick="downloadExcel()" class="ms-3">
+                    <button id="excelButton" class="btn btn-success">Download Excel</button></a>
+
+                <a href="#" onclick="downloadPdf()" class="ms-3">
+                    <button id="pdfButton" class="btn btn-danger">Download Pdf</button> </a>
+            </div>
+            <div class="col">
+                <div class="date-filter-container">
+                    <form id="filterForm" name="filterForm">
+                        <label for="startDate" style="font-weight: bolder;">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control">
+
+                        <label for="endDate" style="font-weight: bolder;">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control">
+
+                        <button class="btn btn-info" type="submit">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <table class="table my-3 table-hover" id="userTable">
+            <thead>
+                <tr>
+
+                    <th scope="col">Image1</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Price</th>
+
+                    <th scope="col">Address</th>
+              
+
+                    <th scope="col">Email</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (orderData.length> 0) { %>
+                    <% for (let i=0; i < orderData.length; i++) { %>
+                        <tr>
+
+                            <td>
+                                <% orderData[i].products.forEach(product=> { %>
+                                    <% if (product.product_id && product.product_id.image &&
+                                        Array.isArray(product.product_id.image) && product.product_id.image.length> 0) {
+                                        %>
+                                        <img src="/public/productImage/<%= product.product_id.image[0] %>"
+                                            style="width: 100px; height: 100px;">
+                                        <% } else { %>
+                                            No product image found
+                                            <% } %>
+                                                <% }); %>
+                            </td>
+                            <td>
+                                <% if (orderData[i].products && Array.isArray(orderData[i].products) &&
+                                    orderData[i].products.length> 0) { %>
+                                    <% orderData[i].products.forEach(product=> { %>
+                                        <% if (product.product_id && product.product_id.name) { %>
+                                            <%= product.product_id.name %><br>
+                                                <% } else { %>
+                                                    N/A
+                                                    <% } %>
+                                                        <% }); %>
+                                                            <% } %>
+                            </td>
+                            <td>
+                                <% if (orderData[i].products && orderData[i].products.length> 0) { %>
+                                    <% orderData[i].products.forEach(product=> { %>
+                                        <%= product.quantity %><br>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    N/A
+                                                    <% } %>
+                            </td>
+                            <td>
+                                <%= orderData[i].totalPrice %>
+                            </td>
+
+                            <td>
+                                <% if (orderData[i].addresses) { %>
+                                    <% if (Array.isArray(orderData[i].addresses)) { %>
+                                        <% orderData[i].addresses.forEach(function(address) { %>
+                                            <%= address && typeof address==='object' ? `${address.address}<br>Pincode:
+                                                ${address.pincode}<br>District: ${address.district}<br>City:
+                                                ${address.city}` : 'N/A' %>
+                                                <% }); %>
+                                                    <% } else if (typeof orderData[i].addresses==='object' ) { %>
+                                                        <%= orderData[i].addresses.address %><br>
+                                                            Pincode: <%= orderData[i].addresses.pincode %><br>
+                                                                District: <%= orderData[i].addresses.district %><br>
+                                                                    City: <%= orderData[i].addresses.city %>
+                                                                        <% } else { %>
+                                                                            N/A
+                                                                            <% } %>
+                                                                                <% } else { %>
+                                                                                    N/A
+                                                                                    <% } %>
+                            </td>
+                           
+
+                            <td>
+                                <%= orderData[i].email %>
+                            </td>
+                            <td>
+                                <%= orderData[i].paymentMethod %>
+                            </td>
+                            <td>
+
+                                <%= orderData[i].orderPlacedAt %>
+
+
+                                    <%= console.log('orderPlacedAt:', orderData[i].orderPlacedAt) %>
+                            </td>
+                        </tr>
+                        <% } %>
+                            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <% for (let i=1; i <=totalPages; i++) { %>
+                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>">
+                        <%= i %>
+                    </a>
+                </li>
+                <% } %>
+        </ul>
+    </nav>
+    <script>
+    function downloadPdf() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // Construct the URL with startDate and endDate parameters
+        var url = `/admin/exportPdfOrders?startDate=${startDate}&endDate=${endDate}`;
+
+        // Redirect to the constructed URL
+        window.location.href = url;
+    }
+
+    function downloadExcel() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // Construct the URL with startDate and endDate parameters
+        var url = `/admin/exportExcelOrders?startDate=${startDate}&endDate=${endDate}`;
+
+        // Redirect to the constructed URL
+        window.location.href = url;
+    }
+
+    document.getElementById('filterForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // Construct the URL with startDate and endDate parameters
+        var url = `/admin/reports?startDate=${startDate}&endDate=${endDate}`;
+
+        // Fetch data based on the provided date range
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Append the filtered data to the table
+                console.log('Filtered Data:', data);
+                appendToTable(data);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function appendToTable(filteredData) {
+        var tableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+
+        if (filteredData.length > 0) {
+            filteredData.forEach(function (value) {
+                var row = tableBody.insertRow();
+
+                var imagesCell = row.insertCell(0);
+                if (value.products && Array.isArray(value.products) && value.products.length > 0 &&
+                    value.products[0].product_id && value.products[0].product_id.image &&
+                    Array.isArray(value.products[0].product_id.image) && value.products[0].product_id.image.length > 0) {
+                    var imgElement = document.createElement('img');
+                    imgElement.src = "/public/productImage/" + value.products[0].product_id.image[0];
+                    imgElement.style.width = "150px";
+                    imgElement.style.height = "150px";
+                    imagesCell.appendChild(imgElement);
+                } else {
+                    imagesCell.textContent = 'No images found';
+                }
+
+                row.insertCell(1).textContent = value.products[0]?.product_id?.name || 'N/A';
+                row.insertCell(2).textContent = value.products[0]?.product_id?.quantity || 'N/A';
+                row.insertCell(3).textContent = value.totalPrice || 'N/A';
+
+                var addressCell = row.insertCell(4);
+                if (value.addresses && typeof value.addresses === 'object') {
+                    addressCell.innerHTML = `
+                        ${value.addresses.address || 'N/A'}<br>
+                        Pincode: ${value.addresses.pincode || 'N/A'}<br>
+                        District: ${value.addresses.district || 'N/A'}<br>
+                        City: ${value.addresses.city || 'N/A'}
+                    `;
+                } else {
+                    addressCell.textContent = 'N/A';
+                }
+
+                row.insertCell(5).textContent = value.name || 'N/A';
+                row.insertCell(6).textContent = value.email || 'N/A';
+                row.insertCell(7).textContent = value.paymentMethod || 'N/A';
+                row.insertCell(8).textContent = new Date(value.orderPlacedAt).toLocaleDateString() || 'N/A';
+            });
+        } else {
+            var row = tableBody.insertRow();
+            var cell = row.insertCell(0);
+            cell.colSpan = 9;
+            cell.textContent = 'No data available for the selected date range';
+            cell.style.textAlign = 'center';
+        }
+    }
+</script>
+
+
+    <%- include('../adminLayout/homefooter.ejs') %>

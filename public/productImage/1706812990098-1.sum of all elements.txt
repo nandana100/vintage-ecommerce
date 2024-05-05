@@ -1,0 +1,21 @@
+1.sum of all elements
+2.finding index
+3.array in reverse
+4.sorting in ascending
+descending
+5.largest
+6.smallest
+7.average
+8.finding :odd
+even
+prime
+8.reverse the elements
+9.insert a  element
+10.deletion
+11.merging
+12.second largest
+13.frequency
+14.unique
+15.array elements that occur three times
+16.remove duplicates
+17.elements that occur more than n/2 times in the array

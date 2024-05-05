@@ -1,0 +1,164 @@
+<%- include('../layout/header.ejs') %>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #fbf3f3;
+        background-image: url('https://thumbs.dreamstime.com/b/clothing-men-wooden-floor-129605954.jpg');
+        padding: 0;
+    }
+
+    .container {
+        width: 90%;
+        height:630px;
+        max-width: 400px; /* Limiting maximum width for better readability on larger screens */
+        margin: 100px auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    input[type="email"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 5px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        color:black;
+    }
+
+    .user-input-box {
+        margin-top: 10px;
+    }
+
+    span {
+        font-size: 14px;
+        color: #3e3939;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .error-message {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    button.button1 {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        display: block;
+    }
+
+    button.button1:hover {
+        background-color: #45a049;
+    }
+
+    p.message {
+        color: red;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Additional Styles */
+    .logo {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .logo h1 {
+        color: #fff;
+        font-size: 36px;
+        text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .user-input-box input {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 1px solid #ccc;
+        background: transparent;
+        padding-left: 0;
+        transition: border-bottom-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-bottom-color: #4CAF50;
+        box-shadow: none;
+    }
+
+    .text-danger {
+        font-size: 14px;
+        font-weight: bold;
+        color: #ff0000;
+    }
+</style>
+
+<div class="logo">
+    <h1>Vintage</h1>
+</div>
+
+<div class="container">
+    <h1>Sign up</h1>
+
+    <form id="form" action="/register" name="signupForm" method="post" role="form" enctype="application/x-www-form-urlencoded"
+        onsubmit="return validateForm()">
+        <div class="main-user-info">
+            <div class="user-input-box" >
+                <input type="text" id="name" name="name" placeholder="Username" class="form-control">
+                <span class="error-message" id="nameError"></span>
+            </div>
+
+            <div class="user-input-box">
+                <input type="password" id="password" name="password" placeholder="Password" class="form-control">
+                <span class="error-message" id="passwordError"></span>
+            </div>
+
+            <div class="user-input-box">
+                <input type="number" id="mobile" name="mobile" placeholder="Mobile Number" class="form-control">
+                <span class="error-message" id="mobileError"></span>
+            </div>
+
+            <div class="user-input-box">
+                <input type="email" id="email" name="email" placeholder="Email" class="form-control">
+                <span class="error-message" id="emailError"></span>
+            </div>
+
+            <div class="user-input-box">
+                <input type="text" id="ref_code" name="ref_code" placeholder="Referral Code" class="form-control">
+                <small class="text-danger">* Not mandatory</small>
+            </div>
+        </div>
+
+        <button type="submit" class="button1">Sign Up</button>
+    </form>
+
+    <% if (typeof message !== 'undefined') { %>
+    <p class="message">
+        <%= message %>
+    </p>
+    <% } %>
+</div>
+
+<%- include('../layout/footer.ejs')%>

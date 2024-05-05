@@ -1,0 +1,113 @@
+<%- include('../layout/userhead.ejs') %>
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Set the background color */
+        font-family: 'Arial', sans-serif; /* Choose a suitable font */
+    }
+
+    h1 {
+        color: #343a40; /* Set the heading color */
+        margin-left: 650px;
+        margin-top: 40px;
+    }
+
+    form {
+        max-width: 600px; /* Set the maximum width of the form */
+        margin: 0 auto; /* Center the form horizontally */
+        padding: 20px; /* Add some padding to the form */
+        background-color: #ffffff; /* Set the form background color */
+        border-radius: 8px; /* Add rounded corners to the form */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    }
+
+    .form-group {
+        margin-bottom: 20px; /* Add space between form groups */
+    }
+
+    label {
+        font-weight: bold; /* Make labels bold */
+        color: #495057; /* Set label color */
+    }
+
+    input,
+    textarea {
+        width: 100%; /* Make input fields and textareas full width */
+        padding: 10px; /* Add padding to input fields and textareas */
+        margin-top: 5px; /* Add a small margin to the top of input fields and textareas */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+
+    textarea {
+        resize: vertical; /* Allow vertical resizing of textareas */
+    }
+
+    img {
+        max-width: 100%; /* Make images responsive */
+        height: auto; /* Maintain image aspect ratio */
+        border-radius: 4px; /* Add rounded corners to images */
+        border: 3px solid #dee2e6; /* Add a border around the image */
+    }
+
+    /* Additional styling for the image at the top */
+    .form-image {
+        text-align: center; /* Center the image */
+        margin-bottom: 20px; /* Add space below the image */
+    }
+</style>
+
+<h1 style="margin-left:650px;margin-top:40px">RETURN</h1>
+<br><br>
+
+<!-- Image at the top of the form -->
+
+<form>
+    <% orderData.products.forEach((product, index) => { %>
+        <div class="form-group">
+            <label for="productImage<%= index %>"></label>
+            <img src="/public/productImage/<%= product.product_id.image && product.product_id.image[0] %>"style="width:200px;height:300px;margin-left:120px" alt="Product Image">
+        </div>
+        <div class="form-group">
+            <label for="productName<%= index %>">Product Name</label>
+            <input type="text" class="form-control" id="productName<%= index %>" placeholder="Product Name" value="<%= product.product_id.name %>">
+        </div>
+        <div class="form-group">
+            <label for="productDescription<%= index %>">Product Description</label>
+            <textarea class="form-control" id="productDescription<%= index %>" placeholder="Product Description"><%= product.product_id.description %></textarea>
+        </div>
+      
+    <% }); %>
+    <div class="form-group">
+        <label for="orderID">Order ID</label>
+        <input type="text" class="form-control" id="orderID" placeholder="Order ID" value="<%= orderData._id %>">
+    </div>
+    <div class="form-group">
+        <label for="customerName">Customer Name</label>
+        <input type="text" class="form-control" id="customerName" placeholder="Customer Name" value="<%= orderData.name %>">
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" id="email" placeholder="Email" value="<%= orderData.email %>">
+    </div>
+    <div class="form-group">
+        <label for="address">Address</label>
+        <input type="text" class="form-control" id="address" placeholder="Address" value="<%= orderData.addresses.address %>, <%= orderData.addresses.state %>, <%= orderData.addresses.country %> <%= orderData.addresses.pincode %>">
+    </div>
+<!-- Submit button -->
+<button type="submit" class="btn btn-primary">Submit Return</button>
+<!-- Success message -->
+
+   
+</form>
+<div class="success-message" id="successMessage">
+    </div>
+
+<%- include('../layout/userFoot.ejs') %>
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        // You can add your logic here to handle form submission
+        // For demonstration, let's show a success message
+        document.getElementById('successMessage').innerText = 'Return Successful!';
+    });
+</script>

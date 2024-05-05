@@ -1,0 +1,18 @@
+const num1=[];
+const num2=[];
+let temp;
+let limit = parseInt(prompt("enter the limit of the array:"));
+console.log("enter the elements of first array");
+for(var i=0;i<limit;i++){
+    num1[i]=parseInt(prompt());
+}
+console.log("enter the elements of second array ");
+for(var i=0;i<limit;i++){
+    num2[i]=parseInt(prompt());
+}
+for(var i=0;i<limit;i++)
+{
+temp=num1[i];
+num1[i]=num2[i];
+num2[i]=temp;
+}

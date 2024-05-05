@@ -1,0 +1,89 @@
+<%- include('../adminLayout/homehead.ejs') %>
+
+<div class="container">
+  <form action="/admin/add-coupon" method="POST" class="mx-auto mt-5 p-4 bg-light" style="max-width: 600px;" onsubmit="return validateForm()">
+    <h1 class="text-center mb-4">ADD COUPONS</h1>
+
+    <div class="mb-3">
+      <label class="form-label">Enter Coupon Code</label>
+      <input type="text" class="form-control" name="code" id="code">
+      <small id="codeError" class="text-danger"></small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Enter Discount</label>
+      <input type="number" class="form-control" name="discount" id="discount">
+      <small id="discountError" class="text-danger"></small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Minimum Purchase</label>
+      <input type="number" class="form-control" name="minimumPurchase" id="minPurchase">
+      <small id="minPurchaseError" class="text-danger"></small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Discount Type</label>
+      <select class="form-select" name="discountType" id="discountType">
+        <option value="percentage">Percentage</option>
+        <option value="flat">Flat</option>
+      </select>
+      <small id="discountTypeError" class="text-danger"></small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Enter Expiry Date</label>
+      <input type="datetime-local" class="form-control" name="expiry" id="expiry">
+      <small id="expiryError" class="text-danger"></small>
+    </div>
+
+    <div>
+      <% if (typeof message !== 'undefined') { %>
+        <p style="color:rgb(128, 23, 0);font-weight: bold;">
+          <%= message %>
+        </p>
+      <% } %>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-outline-success mx-auto">Save Coupon</button>
+    </div>
+  </form>
+</div>
+
+<%- include('../adminLayout/homefooter.ejs') %>
+
+<script>
+function validateForm() {
+    const code = document.getElementById('code').value.trim();
+    const discountInput = document.getElementById('discount').value.trim();
+    const minPurchaseInput = document.getElementById('minPurchase').value.trim();
+    const discount = parseFloat(discountInput);
+    const minPurchase = parseFloat(minPurchaseInput);
+    const discountType = document.getElementById('discountType').value.trim();
+    const expiryDate = document.getElementById('expiry').value.trim();
+
+    // Validate discount and minimum purchase not to be negative
+    const discountError = isNaN(discount) || discount < 0 ? 'Discount must be a positive number.' : '';
+    const minPurchaseError = isNaN(minPurchase) || minPurchase < 0 ? 'Minimum purchase must be a positive number.' : '';
+    
+    // Validate discount not to exceed 100%
+    const discountPercentageError = discount > 100 ? 'Discount cannot exceed 100%.' : '';
+
+    document.getElementById('codeError').innerHTML = code === '' ? 'Coupon code is required.' : '';
+    document.getElementById('discountError').innerHTML = discountInput === '' ? 'Discount is required.' : discountError || discountPercentageError;
+    document.getElementById('minPurchaseError').innerHTML = minPurchaseInput === '' ? 'Minimum purchase is required.' : minPurchaseError;
+    document.getElementById('discountTypeError').innerHTML = discountType === '' ? 'Discount type is required.' : '';
+    document.getElementById('expiryError').innerHTML = expiryDate === '' ? 'Expiry date is required.' : '';
+
+    // Validate expiry date
+    const currentDateTime = new Date();
+    const selectedDateTime = new Date(expiryDate);
+    const expiryError = selectedDateTime <= currentDateTime ? 'Expiry date should be in the future.' : '';
+    document.getElementById('expiryError').innerHTML = expiryError;
+
+    return code !== '' && discountInput !== '' && minPurchaseInput !== '' && discountType !== '' && expiryDate !== '' &&
+           !isNaN(discount) && !isNaN(minPurchase) && discount >= 0 && discount <= 100 && minPurchase >= 0 && selectedDateTime > currentDateTime; // Ensure discount and minimum purchase are valid numbers, not negative, discount is not more than 100%, and expiry date is in the future
+}
+
+</script>
+
+
+
+

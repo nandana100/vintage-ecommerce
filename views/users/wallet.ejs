@@ -1,0 +1,141 @@
+<%- include('../layout/userhead.ejs') %>
+
+<style>
+  body {
+     background-color: #afb3a6;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .wallet-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  h1 {
+    color: #212529;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  p {
+    color: #484848;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-block;
+    margin-top: 20px;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .btn-back {
+    margin-top: 20px;
+  }
+
+  .wallet-info {
+    margin-top: 20px;
+  }
+
+  .wallet-balance {
+    font-size: 24px;
+    margin-top: 10px;
+  }
+
+  .txn-history {
+    margin-top: 20px;
+  }
+
+  .txn-list {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .debit-amount {
+    color: green;
+    font-weight: bold;
+  }
+
+  .credit-amount {
+    color: red;
+    font-weight: bold;
+  }
+
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="new-integrity-value" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12 text-start">
+      <a href="/home" class="btn btn-dark">BACK</a>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="wallet-container">
+        <h1>My E-wallet</h1>
+
+        <div class="wallet-info">
+          <i class="fas fa-wallet"></i>
+          <% if (wallet) { %>
+            <p class="wallet-balance">Wallet Balance: <%= wallet.totalPrice %>/-</p>
+          <% } else { %>
+            <p class="wallet-balance">Wallet Balance: N/A</p>
+          <% } %>
+        </div>
+
+        <hr>
+
+        <div class="txn-history">
+          <p><b>History</b></p>
+
+          <% if (!orderData.length) { %>
+            <p class="txn-list">No transactions : <span class="debit-amount">0</span></p>
+          <% } else { %>
+            <% orderData.forEach(function(item) { %>
+              <p class="txn-list">Payment: <%= item.paymentMethod %> | <span class="debit-amount">Amount added: <%= item.totalPrice %>/-</span></p>
+            <% }); %>
+          <% } %>
+
+          <% if (!orderData.length) { %>
+            <p class="txn-list">No transactions : <span class="credit-amount">0</span></p>
+          <% } else { %>
+            <% orderData.forEach(function(item) { %>
+              <p class="txn-list">Payment: <%= item.paymentMethod %> | <span class="credit-amount">Amount deducted: <%= item.totalPrice %>/-</span></p>
+            <% }); %>
+          <% } %>
+
+          <!-- Pagination controls -->
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>">
+                    <%= i %>
+                  </a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/userFoot.ejs') %>
